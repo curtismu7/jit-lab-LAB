@@ -92,3 +92,36 @@ test('GET /api/shelf answers the shelf URL (null when unconfigured)', async () =
   assert.deepEqual(Object.keys(r.json), ['shelfUrl']);
   assert.equal(r.json.shelfUrl, null);
 });
+
+test('behind the lab-proxy: a write is accepted only with the proxy\'s forwarded origin AND an allowed Host', async () => {
+  const { createServer, request } = await import('node:http');
+  const PROXY = 'jit-lab.local.ping-devops.com';
+  const FWD = { 'x-forwarded-host': 'local.ping-devops.com:8443', 'x-forwarded-proto': 'https' };
+  process.env.LAB_ALLOWED_HOSTS = PROXY;
+  const server = createServer(mk());
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  const port = server.address().port;
+  try {
+    // node:http, because fetch cannot set Host
+    const send = (host, headers) => new Promise((resolve, reject) => {
+      const body = '{}';
+      const req = request({ host: '127.0.0.1', port, path: '/api/reset', method: 'POST', headers: { host, 'content-type': 'application/json', 'content-length': Buffer.byteLength(body), ...headers } }, (res) => { res.resume(); res.on('end', () => resolve(res.statusCode)); });
+      req.on('error', reject); req.end(body);
+    });
+    const via = (headers) => send(`${PROXY}:${port}`, headers);
+    // what the browser and the proxy really send for a same-origin POST
+    assert.equal(await via({ ...FWD, origin: 'https://local.ping-devops.com:8443', 'sec-fetch-site': 'same-origin' }), 200);
+    assert.equal(await via({ ...FWD, origin: 'https://local.ping-devops.com:8443' }), 200);
+    // refused: a foreign origin, a mismatched forwarded host, a wrong scheme, a cross-site fetch, no forwarded host at all
+    for (const headers of [
+      { ...FWD, origin: 'https://evil.example' },
+      { ...FWD, origin: 'https://local.ping-devops.com:9999' },
+      { ...FWD, origin: 'http://local.ping-devops.com:8443' },
+      { ...FWD, origin: 'https://local.ping-devops.com:8443', 'sec-fetch-site': 'cross-site' },
+      { origin: 'https://local.ping-devops.com:8443' },
+      { 'x-forwarded-host': 'evil.example', 'x-forwarded-proto': 'https', origin: 'https://local.ping-devops.com:8443' },
+    ]) assert.equal(await via(headers), 403, JSON.stringify(headers));
+    // the forwarded headers are not believed on a loopback Host: a page that did not come through the proxy cannot use them
+    assert.equal(await send(`127.0.0.1:${port}`, { ...FWD, origin: 'https://local.ping-devops.com:8443' }), 403);
+  } finally { server.close(); delete process.env.LAB_ALLOWED_HOSTS; }
+});
