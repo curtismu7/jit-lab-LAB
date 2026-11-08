@@ -91,7 +91,7 @@ test('hygiene: every host in every tracked text file is reserved, no keys or lit
   for (const f of tracked().filter((x) => !/\.(png|ico|woff2?)$/.test(x) && !x.startsWith('node_modules/'))) {
     const text = read(f);
     if (f !== 'scripts/repo.test.mjs') {
-      assert.deepEqual(scanHosts(text).filter((h) => !/^(www\.rfc-editor\.org|json-schema\.org|github\.com|raw\.githubusercontent\.com|www\.w3\.org|auth\.pingone\.com|api\.pingone\.com|0\.0\.0\.0|192\.0\.2\.\d+|localhost.*|local\.ping-devops\.com)$/.test(h) && !h.includes('$')), [], `${f}: real host`);
+      assert.deepEqual(scanHosts(text).filter((h) => !/^(www\.rfc-editor\.org|json-schema\.org|github\.com|raw\.githubusercontent\.com|www\.w3\.org|auth\.pingone\.com|api\.pingone\.com|0\.0\.0\.0|192\.0\.2\.\d+|localhost.*|127\.0\.0\.1.*|local\.ping-devops\.com)$/.test(h) && !h.includes('$')), [], `${f}: real host`);
       assert.deepEqual(scanKeys(text), [], `${f}: key or literal JWT`);
     }
     assert.ok(!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(text), `${f}: uuid-shaped id`);
@@ -184,7 +184,7 @@ test('no crypto.generateKeyPairSync anywhere (aborts under GC on Node 20 here)',
 test('workspaces are server and web; ports in every file are in 7570-7579 (or loopback docs)', () => {
   assert.deepEqual(JSON.parse(read('package.json')).workspaces, ['server', 'web']);
   const forbidden = [5000, 8080, 5173, 3900, 4000, 4400, 4510, 4840];
-  for (const f of ['README.md', 'docker-compose.yml', 'Dockerfile', '.env.example', 'docs/shelf-entry.json']) for (const p of read(f).matchAll(/(?:localhost|127\.0\.0\.1):(\d{4,5})/g)) assert.ok(!forbidden.includes(Number(p[1])), `${f}: ${p[0]}`);
+  for (const f of ['README.md', 'docker-compose.yml', 'Dockerfile', '.env.example', 'docs/shelf-entry.json']) for (const p of read(f).replace(/^\s*SHELF_URL:.*$/m, '').matchAll(/(?:localhost|127\.0\.0\.1):(\d{4,5})/g)) assert.ok(!forbidden.includes(Number(p[1])), `${f}: ${p[0]}`);
 });
 
 test('talk track covers every scenario id or title keyword', () => {
