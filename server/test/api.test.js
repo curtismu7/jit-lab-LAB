@@ -92,3 +92,11 @@ test('GET /api/shelf answers the shelf URL (null when unconfigured)', async () =
   assert.deepEqual(Object.keys(r.json), ['shelfUrl']);
   assert.equal(r.json.shelfUrl, null);
 });
+
+test('GET /api/shelf is reachable with no web build: returns the SHELF_URL (trailing slash trimmed); POST is not 200', async () => {
+  const app = createApp({ mode: createMode({ forceMock: true }), env: { STANDALONE_ENV: '/nonexistent/settings.env', SHELF_URL: 'https://shelf.example:8443/' } });
+  const got = await call(app, 'GET', '/api/shelf');
+  assert.equal(got.status, 200);
+  assert.deepEqual(got.json, { shelfUrl: 'https://shelf.example:8443' });
+  assert.notEqual((await call(app, 'POST', '/api/shelf', {})).status, 200);
+});
