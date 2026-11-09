@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { getCatalog, getInfo, requestModeSwitch, resetServer } from "./lib/api.js";
 import ModeToggle from "./components/ModeToggle.jsx";
 import ShelfLink from "./components/ShelfLink.jsx";
+// Opened from Customer Agent LAB (UC17 routes here): strip + header Back only. Nothing is preselected.
+import ReturnLink from "./return-link/ReturnLink.jsx";
 import BrokerTab from "./tabs/BrokerTab.jsx";
 
 export const FALLBACK_BANNER = "MOCK mode. SIMULATED: in-process mock issuer and mock API. Every token is mock and labelled. No tenant, no outbound network.";
@@ -65,9 +67,11 @@ export default function App() {
       <a className="skip" href="#main">Skip to content</a>
       <header>
         <p className="banner" data-testid="banner">{banner}</p>
+        <ReturnLink app="jit-lab" />
         <div className="head">
           <h1 className="head__title">JIT Ephemeral Credentials LAB</h1>
           <div className="head__tools">
+            <ReturnLink app="jit-lab" variant="header" />
             <ShelfLink />
             <ModeToggle info={info} onSelect={onMode} />
             <label className="inline">Theme
