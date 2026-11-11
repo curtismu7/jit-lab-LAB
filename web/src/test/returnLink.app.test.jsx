@@ -62,3 +62,8 @@ describe("return link", () => {
     expect(returnLinkFor("jit-lab").href).toBe("http://127.0.0.1:5603/?returned=jit-lab&uc=UC17");
   });
 });
+
+  it("?from=ai-demo-standalone: strip names AI Demo Standalone, Back goes to /ai-demo-standalone/ under the proxy", () => {
+    window.history.replaceState(null, "", "/jit-lab/?from=ai-demo-standalone&uc=UC12");
+    expect(returnLinkFor("jit-lab").href).toBe("/ai-demo-standalone/?returned=jit-lab&uc=UC12");
+  });
