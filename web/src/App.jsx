@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
+import fs from "node:fs";
+import TopMenu, { applyFontSize } from "./top-menu/TopMenu.jsx";
 import { getCatalog, getInfo, requestModeSwitch, resetServer } from "./lib/api.js";
-import ModeToggle from "./components/ModeToggle.jsx";
 import ShelfLink from "./components/ShelfLink.jsx";
 // Opened from Customer Agent LAB (UC17 routes here): strip + header Back only. Nothing is preselected.
 import ReturnLink from "./return-link/ReturnLink.jsx";
 import BrokerTab from "./tabs/BrokerTab.jsx";
+
+const LAB_VERSION = (() => { try { return JSON.parse(fs.readFileSync(new URL("../../package.json", import.meta.url), "utf8")).version || null; } catch { return null; } })();
 
 export const FALLBACK_BANNER = "MOCK mode. SIMULATED: in-process mock issuer and mock API. Every token is mock and labelled. No tenant, no outbound network.";
 const read = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
@@ -17,6 +20,7 @@ export default function App() {
   const [loadError, setLoadError] = useState(null);
   const [theme, setTheme] = useState(() => (["light", "dark"].includes(read("jitl.theme", "")) ? read("jitl.theme", "") : "system"));
   const [present, setPresent] = useState(() => read("jitl.present", "0") === "1");
+  const [fontStep, setFontStep] = useState(() => { const f = read("jitl.font", "M"); return ["S", "M", "L"].includes(f) ? f : "M"; });
   const [history, setHistory] = useState([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
@@ -29,6 +33,7 @@ export default function App() {
   useEffect(() => { loadAll().catch((e) => setLoadError(e.message)); }, [loadAll]);
   useEffect(() => { if (theme === "system") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = theme; }, [theme]);
   useEffect(() => { if (present) document.documentElement.dataset.present = "1"; else delete document.documentElement.dataset.present; }, [present]);
+  useEffect(() => { applyFontSize(fontStep); write("jitl.font", fontStep); }, [fontStep]);
   useEffect(() => {
     const on = (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey || typing(e.target)) return;
@@ -72,17 +77,17 @@ export default function App() {
           <h1 className="head__title">JIT Ephemeral Credentials LAB</h1>
           <div className="head__tools">
             <ReturnLink app="jit-lab" variant="header" />
-            <ShelfLink />
-            <ModeToggle info={info} onSelect={onMode} />
-            <label className="inline">Theme
-              <select value={theme} onChange={(e) => { const t = e.target.value; setTheme(t); try { localStorage.setItem("jitl.theme", t); } catch { /* not remembered */ } }} data-testid="theme">
-                <option value="system">Auto</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
-            </label>
-            <button type="button" className="btn" aria-pressed={present} onClick={() => setPresent((v) => { write("jitl.present", v ? "0" : "1"); return !v; })}>Present</button>
-            <button type="button" className="btn" onClick={async () => { await resetServer(); setHistory([]); setAnnounce("Reset."); }}>Reset</button>
+            <TopMenu
+              mode={{ value: info?.source === "real" ? "real" : "mock", onChange: onMode, realAvailable: info ? info.realAvailable === true : null, realHint: info?.realReason || undefined }}
+              theme={{ value: theme, onChange: (t) => { setTheme(t); try { localStorage.setItem("jitl.theme", t); } catch { /* not remembered */ } } }}
+              fontSize={{ value: fontStep, onChange: setFontStep }}
+              present={{ active: present, onToggle: () => setPresent((v) => { write("jitl.present", v ? "0" : "1"); return !v; }), label: "Present (P)" }}
+              help={{ href: "https://github.com/curtismu7/jit-lab-LAB#readme" }}
+              version={LAB_VERSION}
+              onReset={async () => { await resetServer(); setHistory([]); setAnnounce("Reset."); }}
+            >
+              <ShelfLink />
+            </TopMenu>
           </div>
         </div>
       </header>

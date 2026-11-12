@@ -17,7 +17,8 @@ code { font-size: 13px; overflow-wrap: anywhere; }
 .skip { position: absolute; left: 8px; top: -64px; z-index: 10; padding: 8px 14px; background: var(--surface); color: var(--text); border: 2px solid var(--accent); border-radius: 8px; }
 .skip:focus { top: 8px; }
 
-.head { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 12px 0 8px; }
+.head { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 12px 0 8px; position: relative; }
+html { font-size: var(--fs, 16px); }
 .head__title { margin: 0; font-size: 22px; display: flex; align-items: center; gap: 10px; }
 .head__mark { display: inline-grid; place-items: center; padding: 2px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font: 700 13px var(--font-mono); letter-spacing: 0.08em; }
 .head__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }

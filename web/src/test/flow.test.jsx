@@ -51,10 +51,10 @@ test("the attack table shows standing accepted and jit refused at capture + 1 h"
 test("rule 19: toggle present; Real disabled with the how-to when unconfigured", async () => {
   render(<App />);
   await screen.findByTestId("banner");
-  const real = screen.getByTestId("mode-real");
+  const real = screen.getByRole("option", { name: "Real" });
   expect(real).toBeDisabled();
   expect(real.getAttribute("title")).toMatch(/PINGONE_ENVIRONMENT_ID/);
-  expect(screen.getByTestId("mode-mock").getAttribute("aria-pressed")).toBe("true");
+  expect(screen.getByTestId("mode-select").value).toBe("mock");
 });
 
 test("fallback banner mentions simulation", () => {
