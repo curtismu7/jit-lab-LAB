@@ -59,7 +59,7 @@ export default function App() {
     return (
       <>
         <a className="skip" href="#main">Skip to content</a>
-        <header><p className="banner">{FALLBACK_BANNER}</p></header>
+        <p className="banner">{FALLBACK_BANNER}</p>
         <main className="page" id="main" tabIndex={-1}>
           {loadError ? <p className="alert" role="alert">Could not reach the lab server: {loadError}</p> : <p className="muted" role="status">Loading the credential broker...</p>}
         </main>
@@ -70,26 +70,31 @@ export default function App() {
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
-      <header>
-        <p className="banner" data-testid="banner">{banner}</p>
-        <ReturnLink app="jit-lab" />
-        <div className="head">
-          <h1 className="head__title">JIT Ephemeral Credentials LAB</h1>
-          <div className="head__tools">
-            <ReturnLink app="jit-lab" variant="header" />
-            <TopMenu
-              mode={{ value: info?.source === "real" ? "real" : "mock", onChange: onMode, realAvailable: info ? info.realAvailable === true : null, realHint: info?.realReason || undefined }}
-              theme={{ value: theme, onChange: (t) => { setTheme(t); try { localStorage.setItem("jitl.theme", t); } catch { /* not remembered */ } } }}
-              fontSize={{ value: fontStep, onChange: setFontStep }}
-              present={{ active: present, onToggle: () => setPresent((v) => { write("jitl.present", v ? "0" : "1"); return !v; }), label: "Present (P)" }}
-              help={{ href: "https://github.com/curtismu7/jit-lab-LAB#readme" }}
-              version={LAB_VERSION}
-              onReset={async () => { await resetServer(); setHistory([]); setAnnounce("Reset."); }}
-            >
-              <ShelfLink />
-            </TopMenu>
-          </div>
-        </div>
+      <p className="banner" data-testid="banner">{banner}</p>
+      <ReturnLink app="jit-lab" />
+      <header className="shell-bar">
+        <span className="shell-brand">
+          <span className="shell-logo" aria-hidden="true">JIT</span>
+          <h1>JIT Ephemeral Credentials LAB</h1>
+          {info?.source === "real"
+            ? <span className="shell-badge shell-badge--real" data-testid="mode-badge">Real<span className="sr-only">: the standing credential comes from the configured issuer</span></span>
+            : <span className="shell-badge" data-testid="mode-badge">Mock<span className="sr-only">: in-process mock issuer, no tenant contacted</span></span>}
+        </span>
+        <nav className="shell-nav" aria-label="Views">
+          <a href="#main" aria-current="page">Credential broker</a>
+        </nav>
+        <TopMenu
+          mode={{ value: info?.source === "real" ? "real" : "mock", onChange: onMode, realAvailable: info ? info.realAvailable === true : null, realHint: info?.realReason || undefined }}
+          theme={{ value: theme, onChange: (t) => { setTheme(t); try { localStorage.setItem("jitl.theme", t); } catch { /* not remembered */ } } }}
+          fontSize={{ value: fontStep, onChange: setFontStep }}
+          present={{ active: present, onToggle: () => setPresent((v) => { write("jitl.present", v ? "0" : "1"); return !v; }), label: "Present (P)" }}
+          help={{ href: "https://github.com/curtismu7/jit-lab-LAB#readme" }}
+          version={LAB_VERSION}
+          onReset={async () => { await resetServer(); setHistory([]); setAnnounce("Reset."); }}
+        >
+          <ShelfLink />
+          <ReturnLink app="jit-lab" variant="header" />
+        </TopMenu>
       </header>
       <main className="page" id="main" tabIndex={-1}>
         <BrokerTab
