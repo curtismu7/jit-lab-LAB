@@ -2,9 +2,7 @@
    no colour literals, no dark-mode media queries, no forced priority, breakpoints 600px and 900px only. */
 :root[data-present="1"] body { font-size: 20px; }
 :root[data-present="1"] [data-admin-only] { display: none; }
-.page { padding: 0 0 32px; }
-header, .page { max-width: 1600px; margin-left: auto; margin-right: auto; }
-main:focus { outline: none; }
+.page { max-width: 1100px; margin: 0 auto; padding: 16px 0 32px; }
 h2 { margin: 8px 0 4px; font-size: 24px; }
 h3 { margin: 0 0 8px; font-size: 17px; }
 h4 { margin: 12px 0 4px; font-size: 15px; }
@@ -17,10 +15,20 @@ code { font-size: 13px; overflow-wrap: anywhere; }
 .skip { position: absolute; left: 8px; top: -64px; z-index: 10; padding: 8px 14px; background: var(--surface); color: var(--text); border: 2px solid var(--accent); border-radius: 8px; }
 .skip:focus { top: 8px; }
 
-.head { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; padding: 12px 0 8px; position: relative; }
 html { font-size: var(--fs, 16px); }
-.head__title { margin: 0; font-size: 22px; display: flex; align-items: center; gap: 10px; }
-.head__mark { display: inline-grid; place-items: center; padding: 2px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font: 700 13px var(--font-mono); letter-spacing: 0.08em; }
+/* Shell bar (STANDALONE-UI-PATTERNS.md section 1): Core Dark in both themes, Ping Red gradient rule, full-bleed. */
+.shell-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 10px 20px; margin: 0 -16px; position: relative;
+  background: var(--box-dark); color: var(--on-box); border-bottom: 3px solid transparent; border-image: var(--accent-gradient) 1; }
+.shell-bar h1 { margin: 0; color: var(--on-box); font-size: 19px; }
+.shell-bar .top-menu__ctl { color: var(--on-box); }
+.shell-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: 0.02em; }
+.shell-logo { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 4px; border-radius: 4px; background: var(--accent-gradient); color: var(--on-accent); font: 800 11px var(--font-mono); }
+.shell-badge { padding: 2px 8px; border-radius: 999px; border: 1px solid transparent; background: var(--accent-gradient); color: var(--on-accent); font: 700 11px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.shell-badge--real { background: var(--surface-2); color: var(--status-warn); border-color: var(--status-warn); }
+.shell-nav { display: flex; flex-wrap: wrap; gap: 4px; flex: 1 1 12rem; }
+.shell-nav a { padding: 5px 12px; border-radius: 999px; border: 1px solid transparent; color: var(--on-box); text-decoration: none; font-size: 14px; font-weight: 500; }
+.shell-nav a:hover { border-color: var(--on-box); }
+.shell-nav a[aria-current="page"] { background: var(--accent-gradient); color: var(--on-accent); font-weight: 600; }
 .head__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .seg { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .chip { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-size: 12px; font-weight: 600; }
@@ -71,7 +79,8 @@ li[data-state="current"] > .story__step { border-color: var(--accent); border-wi
 button[aria-disabled="true"] { opacity: 0.75; cursor: not-allowed; }
 button.primary[aria-disabled="true"] { opacity: 0.88; }
 @media (max-width: 600px) {
-  .head__title { font-size: 18px; }
+  .shell-bar { gap: 10px; padding: 10px 16px; }
+  .shell-nav { order: 3; flex-basis: 100%; }
   .card, .story { padding: 10px 12px; }
   .story__step { flex-wrap: wrap; }
   .story__tag { margin-left: 32px; }
@@ -86,7 +95,6 @@ button.primary[aria-disabled="true"] { opacity: 0.88; }
 .btn { padding: 8px 14px; margin: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
 .btn:hover:not(:disabled) { border-color: var(--accent); }
 .btn:disabled { opacity: 0.5; cursor: default; }
-.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 .btn.small { padding: 5px 11px; font-size: 13px; }
 .head__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
 .head__tools > * + * { margin-left: 0; }
