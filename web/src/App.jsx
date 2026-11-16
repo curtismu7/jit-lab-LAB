@@ -3,6 +3,7 @@ import fs from "node:fs";
 import TopMenu, { applyFontSize } from "./top-menu/TopMenu.jsx";
 import { getCatalog, getInfo, requestModeSwitch, resetServer } from "./lib/api.js";
 import ShelfLink from "./components/ShelfLink.jsx";
+import VerifyMark from "./components/VerifyMark.jsx";
 // Opened from Customer Agent LAB (UC17 routes here): strip + header Back only. Nothing is preselected.
 import ReturnLink from "./return-link/ReturnLink.jsx";
 import BrokerTab from "./tabs/BrokerTab.jsx";
@@ -93,6 +94,7 @@ export default function App() {
           onReset={async () => { await resetServer(); setHistory([]); setAnnounce("Reset."); }}
         >
           <ShelfLink />
+          <VerifyMark id="jit-lab" />
           <ReturnLink app="jit-lab" variant="header" />
         </TopMenu>
       </header>
