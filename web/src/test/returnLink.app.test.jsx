@@ -8,6 +8,7 @@ import { createHash } from "node:crypto";
 import { returnLinkFor } from "../return-link/returnTargets.js";
 
 vi.mock("../lib/api.js", () => ({
+  getTalkTrack: vi.fn(async () => ({ talkTrack: [] })),
   requestModeSwitch: vi.fn(),
   getCatalog: vi.fn(async () => ({
     banner: "B", source: "mock",
