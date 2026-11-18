@@ -6,12 +6,18 @@ name: jit-lab
 services:
   jit-lab:
     build: .
+    # The lab's own settings (Real mode), optional: copy .env.example to .env. Mock needs none.
+    env_file:
+      - path: .env
+        required: false
     ports:
       - "127.0.0.1:${HOST_PORT:-7570}:7570"
     environment:
       SHELF_URL: ${SHELF_URL:-http://127.0.0.1:4400}
       PORT: "7570"
       JITL_BIND: 0.0.0.0
+      # ping-shared's PingFederate runs on the host (4732); from inside the container that is host.docker.internal.
+      JIT_LAB_PF_ENGINE: ${JIT_LAB_PF_ENGINE:-https://host.docker.internal:4732}
       LAB_ALLOWED_HOSTS: ${LAB_ALLOWED_HOSTS:-jit-lab.local.ping-devops.com}
     read_only: true
     cap_drop: [ALL]

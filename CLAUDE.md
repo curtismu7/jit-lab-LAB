@@ -7,7 +7,7 @@ Follow the rulebook at `~/Development/STANDALONE-RULES.md`.
 ## Real and Mock (rule 19)
 
 - **Mock** (default when Real is not configured): in-process mock issuer (HS256 fixture key) and mock API; deterministic replay clock (exp shifted, no sleeping). Fully offline.
-- **Real**: the standing-pattern credential is minted by the **shared local PingFederate** (rule 20: probed via `~/Development/ping-shared/probe.mjs`, reused, never spawned; client `jit-lab-agent`), or by your PingOne tenant if PF is not configured (`~/Development/.env`). Only claims and a sha256/8 hash are shown. The replay comparison runs identically and honestly shows the standing risk for real. The JIT pattern is mock-only teaching.
+- **Real**: the standing-pattern credential is minted by **ping-shared's PingFederate** (default `https://127.0.0.1:4732`, `JIT_LAB_PF_ENGINE` overrides; reused, never spawned; client `jit-lab-agent`, recipe `docs/pingfederate-client.md`, UNVERIFIED), or by your PingOne tenant if PF is not configured. Settings are the lab's own `.env` beside the compose file, never `~/Development/.env`. Only claims and a sha256/8 hash are shown. The replay comparison runs identically and honestly shows the standing risk for real. The JIT pattern is mock-only teaching.
 - Header toggle POSTs `/api/mode {source}`; default Real if configured else Mock; Real unconfigured answers 409 with the how-to.
 
 ## Non-negotiables

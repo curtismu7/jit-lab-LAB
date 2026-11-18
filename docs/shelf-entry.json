@@ -15,7 +15,7 @@
         "token-security",
         "simulated"
       ],
-      "notes": "Host-run: ./scripts/run.sh (port 7570). Mock: no tenant, no credentials. Real: PINGONE_* in ~/Development/.env (owner-set). Docker: HOST_PORT=7570 docker compose up --build -d (published on 127.0.0.1 only). composeFile is relative to the demo root."
+      "notes": "Host-run: ./scripts/run.sh (port 7570). Mock: no tenant, no credentials. Real (owner-run): JIT_LAB_PF_CLIENT_SECRET (ping-shared's PingFederate, recipe in docs/pingfederate-client.md) or PINGONE_* in the lab's own .env. Docker: HOST_PORT=7570 docker compose up --build -d (published on 127.0.0.1 only). composeFile is relative to the demo root."
     }
   ],
   "pingProducts": [

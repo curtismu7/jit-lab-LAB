@@ -47,7 +47,7 @@ export async function runChecks({ env = process.env } = {}) {
   const pfReal = Boolean(e.JIT_LAB_PF_CLIENT_SECRET);
   add('mode', 'pass', realConfigured(env)
     ? `Mock and Real: ${pfReal ? 'the shared local PingFederate is configured (rule 20: probed, reused, never spawned)' : 'your PingOne tenant is configured'}; the toggle switches without a restart.`
-    : 'Mock and Real toggle present; Real is not configured (set JIT_LAB_PF_CLIENT_SECRET or the PINGONE_* variables in ~/Development/.env), so the Real button is disabled with the how-to. Default: Mock.');
+    : 'Mock and Real toggle present; Real is not configured (set JIT_LAB_PF_CLIENT_SECRET or the PINGONE_* variables in the lab .env file), so the Real button is disabled with the how-to. Default: Mock.');
   add('tenant', 'pass', 'mock only by default: no tenant, no credentials, no outbound network (Real makes exactly the one configured issuer call)');
   if (pfReal) {
     try {

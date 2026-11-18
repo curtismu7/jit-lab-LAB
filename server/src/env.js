@@ -1,12 +1,20 @@
-// The one shared settings file, ~/Development/.env (or STANDALONE_ENV). Read-only, never returned, never logged:
-// only whether the Real-mode variables exist. A bare MODE is NOT read: the shared file is read by every standalone
-// app, and another app's MODE must not switch this one.
+// The lab's own settings file: `.env` beside docker-compose.yml (or the file named by STANDALONE_ENV).
+// Read-only, never returned, never logged: only whether the Real-mode variables exist. A bare MODE is NOT read.
+// Never ~/Development/.env or any AI-DEMO2 file (rulebook "Settings per app").
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+export const OWN_ENV_FILE = fileURLToPath(new URL('../../.env', import.meta.url));
+
+// The PingFederate runtime (engine) the PF Real path calls: ping-shared's own PingFederate by default
+// (host port 4732, https, self-signed certificate). Override with JIT_LAB_PF_ENGINE (Docker: host.docker.internal).
+export const DEFAULT_PF_ENGINE = 'https://127.0.0.1:4732';
+export const pfEngine = (e) => e.JIT_LAB_PF_ENGINE || DEFAULT_PF_ENGINE;
 
 const CANDIDATES = () => {
   const list = [];
   if (process.env.STANDALONE_ENV) list.push(process.env.STANDALONE_ENV);
-  list.push(`${process.env.HOME}/Development/.env`);
+  list.push(OWN_ENV_FILE);
   return list;
 };
 

@@ -91,7 +91,7 @@ test('hygiene: every host in every tracked text file is reserved, no keys or lit
   for (const f of tracked().filter((x) => !/\.(png|ico|woff2?)$/.test(x) && !x.startsWith('node_modules/'))) {
     const text = read(f);
     if (f !== 'scripts/repo.test.mjs') {
-      assert.deepEqual(scanHosts(text).filter((h) => !/^(www\.rfc-editor\.org|json-schema\.org|github\.com|raw\.githubusercontent\.com|www\.w3\.org|auth\.pingone\.com|api\.pingone\.com|0\.0\.0\.0|192\.0\.2\.\d+|localhost.*|127\.0\.0\.1.*|local\.ping-devops\.com)$/.test(h) && !h.includes('$')), [], `${f}: real host`);
+      assert.deepEqual(scanHosts(text).filter((h) => !/^(www\.rfc-editor\.org|json-schema\.org|github\.com|raw\.githubusercontent\.com|www\.w3\.org|auth\.pingone\.com|api\.pingone\.com|0\.0\.0\.0|192\.0\.2\.\d+|localhost.*|127\.0\.0\.1.*|local\.ping-devops\.com|host\.docker\.internal.*)$/.test(h) && !h.includes('$')), [], `${f}: real host`);
       assert.deepEqual(scanKeys(text), [], `${f}: key or literal JWT`);
     }
     assert.ok(!/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(text), `${f}: uuid-shaped id`);
