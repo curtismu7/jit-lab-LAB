@@ -18,3 +18,4 @@ export const resetServer = () => postJson("/api/reset");
 export const mint = (kind, tool) => postJson("/api/mint", { kind, tool });
 export const attack = (kind, tool, captureAgeS) => postJson("/api/attack", { kind, tool, captureAgeS });
 export const revokeTool = (tool) => postJson("/api/revoke-tool", { tool });
+export const getTalkTrack = () => getJson("/api/talk");

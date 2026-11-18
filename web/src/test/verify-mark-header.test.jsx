@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 vi.mock("../lib/api.js", () => ({
+  getTalkTrack: vi.fn(async () => ({ talkTrack: [] })),
   requestModeSwitch: vi.fn(),
   getCatalog: vi.fn(async () => ({
     banner: "B", source: "mock",

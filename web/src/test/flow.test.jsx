@@ -6,6 +6,7 @@ import App, { FALLBACK_BANNER } from "../App.jsx";
 import { mint, attack, revokeTool, requestModeSwitch } from "../lib/api.js";
 
 vi.mock("../lib/api.js", () => ({
+  getTalkTrack: vi.fn(async () => ({ talkTrack: [] })),
   requestModeSwitch: vi.fn(async (source) => ({ source, realAvailable: false, realReason: "Set PINGONE_ENVIRONMENT_ID in ~/Development/.env", banner: "B" })),
   getCatalog: vi.fn(async () => ({
     banner: "B", source: "mock",
