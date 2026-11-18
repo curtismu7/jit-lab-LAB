@@ -24,10 +24,10 @@ Endpoints: `GET /api/health`, `GET /api/catalog`, `POST /api/mint`, `POST /api/a
 
 ## Settings file
 
-Real mode reads the ONE shared settings file `~/Development/.env`. Two issuers, first match wins:
+Real mode reads the lab's own `.env`, beside `docker-compose.yml` (copy `.env.example`, mode 600, gitignored; Docker Compose passes it into the container, `npm start` reads it too, or set `STANDALONE_ENV` to another file). Never `~/Development/.env`. Two issuers, first match wins:
 
-1. **Shared local PingFederate (rule 20)** — `JIT_LAB_PF_CLIENT_SECRET` (client `jit-lab-agent`, scope `agent:invoke:identity`; the one-time recipe is in the `ping-shared` README). Probed, reused, never spawned.
-2. **Your PingOne tenant** — `PINGONE_ENVIRONMENT_ID` + Worker client id + secret.
+1. **PingFederate (ping-shared's, `https://127.0.0.1:4732`)**: `JIT_LAB_PF_CLIENT_SECRET`, the secret of client `jit-lab-agent` (scope `agent:invoke:identity`). The recipe for creating the client is in [docs/pingfederate-client.md](docs/pingfederate-client.md) (**UNVERIFIED**: written from the documented admin API, not run end to end). Another PingFederate: set `JIT_LAB_PF_ENGINE` (Docker defaults it to `https://host.docker.internal:4732`). The lab never starts or configures PingFederate.
+2. **Your PingOne tenant**: `PINGONE_ENVIRONMENT_ID` + Worker client id + secret.
 
 With neither set the Real button is disabled with a how-to tooltip and Mock answers everything. See `.env.example`.
 
@@ -69,7 +69,7 @@ The suite pins: the standing credential is reused (rotating it would defeat the 
 ## Troubleshooting
 
 - **Port taken.** `PORT=<other port in 7570-7579> npm start`.
-- **Real button disabled.** Set the `PINGONE_*` variables in `~/Development/.env` and restart.
+- **Real button disabled.** Set `JIT_LAB_PF_CLIENT_SECRET` (recipe: `docs/pingfederate-client.md`) or the `PINGONE_*` variables in the lab's `.env` and restart.
 - **Real run answers 502.** The tenant said no; the message carries the PingOne error verbatim (check the Worker app's grants).
 
 ## Ownership
