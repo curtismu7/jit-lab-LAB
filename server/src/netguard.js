@@ -1,7 +1,7 @@
 // Runtime netguard: zero real outbound. Every non-loopback socket, DNS lookup, fetch and UDP send is refused and recorded.
 // The mock authorization server is in-process, so nothing in this app has a reason to leave the machine.
 import dns from 'node:dns';
-import { loadSharedEnv } from './env.js';
+import { loadSharedEnv, pfEngine } from './env.js';
 import net from 'node:net';
 import dgram from 'node:dgram';
 import { isLoopbackHost } from './safety.js';
@@ -9,12 +9,12 @@ import { isLoopbackHost } from './safety.js';
 let active = null;
 
 // Hosts Real mode may reach: loopback always, plus the shared PingFederate engine and PingOne
-// when the corresponding credential is configured (rule 20: shared PF is on the host's loopback).
+// when the corresponding credential is configured (ping-shared's PF is on the host's loopback, 127.0.0.1:4732).
 function allowedHosts() {
   const hosts = new Set();
   try {
     const e = { ...process.env, ...loadSharedEnv() };
-    if (e.JIT_LAB_PF_CLIENT_SECRET) { const engine = e.JIT_LAB_PF_ENGINE || 'https://local.ping-devops.com:9031'; try { hosts.add(new URL(engine).hostname); } catch {} }
+    if (e.JIT_LAB_PF_CLIENT_SECRET) { const engine = pfEngine(e); try { hosts.add(new URL(engine).hostname); } catch {} }
   } catch {}
   return hosts;
 }

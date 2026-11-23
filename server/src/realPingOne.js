@@ -2,13 +2,14 @@
 // agent, TTL as configured on the app). The captured-credential replay comparison then runs the
 // same way as in Mock: the standing token is still alive at capture + 1 h - the risk, shown for real.
 // The JIT pattern is mock-only teaching: per-call tool-bound minting is the lab's own broker.
-import { loadSharedEnv } from './env.js';
+import { loadSharedEnv, pfEngine } from './env.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import https from 'node:https';
 
-// The shared local PingFederate presents a mkcert-signed cert; Node does not read the macOS keychain,
-// so pin the CA file (default: the mkcert root; override JIT_LAB_PF_CA). Loopback only (netguard).
+// ping-shared's PingFederate presents a self-signed certificate (a mkcert-signed one if you replaced it); Node does
+// not read the macOS keychain, so pin a CA file when one exists (default: the mkcert root; override JIT_LAB_PF_CA).
+// With no CA file the check is off, which is acceptable only because the host is local (netguard).
 const pfAgent = (env) => {
   const caPath = env.JIT_LAB_PF_CA || `${process.env.HOME}/Library/Application Support/mkcert/rootCA.pem`;
   const ca = fs.existsSync(caPath) ? fs.readFileSync(caPath) : undefined;
@@ -31,17 +32,17 @@ const postForm = (url, { headers, body, agent }) => new Promise((resolve, reject
 const form = (obj) => new URLSearchParams(obj).toString();
 
 // Real via the SHARED local PingFederate (rule 20: probe, reuse, never spawn a second one).
-// The client `jit-lab-agent` is created once by the ping-shared README recipe; its secret
-// lives in ~/Development/.env (JIT_LAB_PF_CLIENT_SECRET) and is never printed or committed.
+// The client `jit-lab-agent` is created once with this lab's own recipe (docs/pingfederate-client.md); its secret
+// lives in the lab's own .env (JIT_LAB_PF_CLIENT_SECRET) and is never printed or committed.
 export async function realSharedPingFederate({ fetchFn = fetch, env = process.env } = {}) {
   const e = { ...env, ...loadSharedEnv() };
   const clientId = e.JIT_LAB_PF_CLIENT_ID || 'jit-lab-agent';
   const secret = e.JIT_LAB_PF_CLIENT_SECRET;
   if (!secret) {
-    const err = new Error('no shared PingFederate credential: set JIT_LAB_PF_CLIENT_SECRET in ~/Development/.env (see ping-shared README)');
+    const err = new Error('no PingFederate client secret: set JIT_LAB_PF_CLIENT_SECRET in the lab .env file (recipe: docs/pingfederate-client.md)');
     err.status = 409; throw err;
   }
-  const engine = e.JIT_LAB_PF_ENGINE || 'https://local.ping-devops.com:9031';
+  const engine = pfEngine(e);
   const r = await postForm(`${engine}/as/token.oauth2`, {
     agent: pfAgent(e),
     headers: { 'content-type': 'application/x-www-form-urlencoded', authorization: `Basic ${Buffer.from(`${clientId}:${secret}`).toString('base64')}` },
