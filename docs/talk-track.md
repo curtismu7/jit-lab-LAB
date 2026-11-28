@@ -1,6 +1,6 @@
 # Talk track
 
-One credential minted once and held for 30 days; one minted per call for 300 seconds, bound to a single tool. Same attacker, same capture. The banner stays on screen, also in presenter mode.
+One credential minted once and held for 30 days; one minted per call for 300 seconds, bound to a single tool. Same attacker, same capture. The MOCK or REAL modal that opens the page says so.
 
 - **The standing credential.** Minted once, held for 30 days, reused on every call. Convenient - and every day it lives is a day a captured copy works.
 - **The JIT credential.** Minted per call, 300 seconds, bound to one tool. The captured copy is dead within minutes; the fresh one cannot be replayed against a different tool.

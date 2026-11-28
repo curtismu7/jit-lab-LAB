@@ -81,10 +81,11 @@ test('docs/references.md marks every product claim UNVERIFIED', () => {
   assert.match(doc, /verified in part/);
 });
 
-test('every banner-bearing surface says what is simulated and names the mode (placeholder page, API banner and the page fallback)', () => {
+test('every surface that says what the lab simulates names the mode (placeholder page, API banner and the mode modal lines)', () => {
   assert.match(read('web/index.html'), /MOCK mode\. SIMULATED/);
   assert.match(read('server/src/app.js'), /MOCK mode\. SIMULATED/);
-  assert.match(read('web/src/App.jsx'), /FALLBACK_BANNER = "MOCK mode\. SIMULATED/);
+  assert.match(read('web/src/App.jsx'), /mock: "SIMULATED: in-process mock issuer and mock API\./);
+  assert.match(read('web/src/App.jsx'), /real: ".*the JIT credential stays mock teaching\."/);
 });
 
 test('hygiene: every host in every tracked text file is reserved, no keys or literal JWTs, no tenant-looking ids, no mermaid', () => {

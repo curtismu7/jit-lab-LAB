@@ -8,7 +8,7 @@ A long-lived agent credential is a standing risk: a captured copy stays useful u
 
 ## What is simulated
 
-**Everything here is SIMULATED.** In Mock mode: in-process mock issuer (HS256 fixture key) and mock API; every token is mock and labelled; the replay clock is deterministic (no sleeping). Real mode mints the standing-pattern credential from your own PingOne tenant (claims and a sha256/8 hash only). The banner on every page says so.
+**Everything here is SIMULATED.** In Mock mode: in-process mock issuer (HS256 fixture key) and mock API; every token is mock and labelled; the replay clock is deterministic (no sleeping). Real mode mints the standing-pattern credential from your own PingOne tenant (claims and a sha256/8 hash only). The MOCK or REAL modal that opens the page says so.
 
 ## Run from a clone
 
