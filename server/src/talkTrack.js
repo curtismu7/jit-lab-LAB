@@ -10,5 +10,5 @@ export const talkLines = () => [
 ];
 
 export function renderTalkTrackMarkdown() {
-  return `# Talk track\n\n${TALK_INTRO}\n\n${talkLines().map((l) => `- **${l.id} ${l.title}.** ${l.say}`).join('\n')}\n\n${TALK_OUTRO}\n`;
+  return `# Talk track\n\n${TALK_INTRO}\n\n${talkLines().map((l) => `- **${l.title}.** ${l.say}`).join('\n')}\n\n${TALK_OUTRO}\n`;
 }
