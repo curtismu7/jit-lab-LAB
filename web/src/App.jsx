@@ -3,6 +3,8 @@ import fs from "node:fs";
 import TopMenu, { applyFontSize } from "./top-menu/TopMenu.jsx";
 import { getCatalog, getInfo, requestModeSwitch, resetServer, getTalkTrack } from "./lib/api.js";
 import TalkTrackDialog from "./talk-track/TalkTrackDialog.jsx";
+import HelpDialog from "./help-dialog/HelpDialog.jsx";
+import { HELP_SECTIONS } from "./helpContent";
 import ShelfLink from "./components/ShelfLink.jsx";
 import VerifyMark from "./components/VerifyMark.jsx";
 // Opened from Customer Agent LAB (UC17 routes here): strip + header Back only. Nothing is preselected.
@@ -23,6 +25,7 @@ export default function App() {
   const [theme, setTheme] = useState(() => (["light", "dark"].includes(read("jitl.theme", "")) ? read("jitl.theme", "") : "system"));
   const [present, setPresent] = useState(() => read("jitl.present", "0") === "1");
   const [talkOpen, setTalkOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [talk, setTalk] = useState([]);
   useEffect(() => { getTalkTrack().then((t) => setTalk(t.talkTrack ?? [])).catch(() => {}); }, []);
   const [fontStep, setFontStep] = useState(() => { const f = read("jitl.font", "M"); return ["S", "M", "L"].includes(f) ? f : "M"; });
@@ -94,7 +97,7 @@ export default function App() {
           fontSize={{ value: fontStep, onChange: setFontStep }}
           present={{ active: present, onToggle: () => setPresent((v) => { write("jitl.present", v ? "0" : "1"); return !v; }), label: "Present (P)" }}
           talkTrack={{ active: talkOpen, onToggle: () => setTalkOpen((v) => !v) }}
-          help={{ href: "https://github.com/curtismu7/jit-lab-LAB#readme" }}
+          help={{ onClick: () => setHelpOpen(true), title: "What this lab is, and what is simulated" }}
           version={LAB_VERSION}
           onReset={async () => { await resetServer(); setHistory([]); setAnnounce("Reset."); }}
         >
@@ -113,6 +116,7 @@ export default function App() {
       <footer><p className="muted small">A captured credential is the question: how long does it stay useful? Standing: days. JIT: minutes. The tools table shows who is holding what right now.</p></footer>
       <div aria-live="polite" className="visually-hidden">{announce}</div>
       <TalkTrackDialog isOpen={talkOpen} onClose={() => setTalkOpen(false)} talk={talk} />
+      <HelpDialog isOpen={helpOpen} onClose={() => setHelpOpen(false)} sections={HELP_SECTIONS} docsUrl="https://github.com/curtismu7/jit-lab-LAB#readme" />
 
     </>
   );
