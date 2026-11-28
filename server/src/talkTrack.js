@@ -1,5 +1,5 @@
 // The talk track is generated here; docs/talk-track.md must match (a repo test pins it).
-export const TALK_INTRO = 'One credential minted once and held for 30 days; one minted per call for 300 seconds, bound to a single tool. Same attacker, same capture. The banner stays on screen, also in presenter mode.';
+export const TALK_INTRO = 'One credential minted once and held for 30 days; one minted per call for 300 seconds, bound to a single tool. Same attacker, same capture. The MOCK or REAL modal that opens the page says so.';
 export const TALK_OUTRO = 'Revoke the tool at the issuer and show that even a fresh JIT credential is refused: TTL and revocation are independent controls.';
 
 export const talkLines = () => [

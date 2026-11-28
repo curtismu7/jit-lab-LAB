@@ -34,12 +34,12 @@ describe("return link", () => {
     for (const [h, f] of pins) expect(createHash("sha256").update(fs.readFileSync(path.join(dir, f))).digest("hex"), f).toBe(h);
   });
 
-  it("?from=customer-agent: banner first, strip right below, header Back in the shell bar TopMenu", async () => {
+  it("?from=customer-agent: the strip shows, no banner, header Back in the shell bar TopMenu", async () => {
     window.history.replaceState(null, "", "/?from=customer-agent&uc=UC17&vertical=banking");
     render(<App />);
     const note = await screen.findByRole("note", NOTE);
     expect(note.textContent).toContain("UC17");
-    expect(screen.getByTestId("banner").nextElementSibling).toBe(note);
+    expect(screen.queryByTestId("banner")).toBeNull();
     expect(document.querySelector("header.shell-bar .top-menu button.return-link--header")).not.toBeNull();
     expect(screen.getAllByRole("button", { name: /Back to Customer Agent LAB/ })).toHaveLength(2);
   });
@@ -48,7 +48,7 @@ describe("return link", () => {
     for (const q of ["/", "/?from=elsewhere&uc=UC17", "/?from=customer-agent&uc=%3Cb%3E", "/?from=customer-agent&uc=UC17&vertical=a%20b"]) {
       window.history.replaceState(null, "", q);
       render(<App />);
-      await screen.findByTestId("banner");
+      await screen.findByTestId("mode-badge");
       await screen.findByRole("heading", { level: 1 });
       expect(screen.queryByRole("button", { name: /Back to/ })).toBeNull();
       expect(screen.queryByRole("note")).toBeNull();

@@ -9,7 +9,7 @@
 
 ## What is simulated
 
-**The decision model.** It is a deterministic feature scorer (override phrasing, sensitive targets, urgency, new-payee, gift-card, off-topic markers), pinned by tests and mutation checks. It is not Jev, not a neural network, not an API. The UI labels every model score SIMULATED and the banner says so on every screen. No claim is made about any product's accuracy, latency or cost.
+**The decision model.** It is a deterministic feature scorer (override phrasing, sensitive targets, urgency, new-payee, gift-card, off-topic markers), pinned by tests and mutation checks. It is not Jev, not a neural network, not an API. The UI labels every model score SIMULATED and the MOCK modal that opens the page says so. No claim is made about any product's accuracy, latency or cost.
 
 ## UNVERIFIED
 

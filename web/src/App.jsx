@@ -10,10 +10,15 @@ import VerifyMark from "./components/VerifyMark.jsx";
 // Opened from Customer Agent LAB (UC17 routes here): strip + header Back only. Nothing is preselected.
 import ReturnLink from "./return-link/ReturnLink.jsx";
 import BrokerTab from "./tabs/BrokerTab.jsx";
+import ModeModal from "./mode-modal/ModeModal.jsx";
 
 const LAB_VERSION = (() => { try { return JSON.parse(fs.readFileSync(new URL("../../package.json", import.meta.url), "utf8")).version || null; } catch { return null; } })();
 
-export const FALLBACK_BANNER = "MOCK mode. SIMULATED: in-process mock issuer and mock API. Every token is mock and labelled. No tenant, no outbound network.";
+// Real-or-mock modal lines. Real is limited: only the standing-pattern credential is real, so the REAL line says what stays mock teaching.
+export const MODE_LINES = {
+  mock: "SIMULATED: in-process mock issuer and mock API. Every token is mock and labelled. No tenant, no outbound network.",
+  real: "The standing-pattern credential comes from your own issuer (the shared local PingFederate, or your PingOne tenant). Only claims and a sha256/8 hash are shown; the JIT credential stays mock teaching.",
+};
 const read = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 const write = (k, v) => { try { localStorage.setItem(k, v); } catch { /* not remembered */ } };
 const typing = (t) => !!t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable);
@@ -61,16 +66,17 @@ export default function App() {
     } catch (e) { setAnnounce(e.message); }
   }, []);
 
-  const banner = info?.banner ?? FALLBACK_BANNER;
+  // Keyed and rendered in both returns, so the modal is not remounted when the loading page gives way to the loaded one.
+  const modal = <ModeModal key="mode-modal" mode={info?.source === "real" ? "real" : "mock"} lines={MODE_LINES} storageKey="jit-mode" />;
 
   if (loadError || !catalog) {
     return (
       <>
         <a className="skip" href="#main">Skip to content</a>
-        <p className="banner">{FALLBACK_BANNER}</p>
         <main className="page" id="main" tabIndex={-1}>
           {loadError ? <p className="alert" role="alert">Could not reach the lab server: {loadError}</p> : <p className="muted" role="status">Loading the credential broker...</p>}
         </main>
+        {modal}
       </>
     );
   }
@@ -78,7 +84,6 @@ export default function App() {
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
-      <p className="banner" data-testid="banner">{banner}</p>
       <ReturnLink app="jit-lab" />
       <header className="shell-bar">
         <span className="shell-brand">
@@ -115,6 +120,7 @@ export default function App() {
       </main>
       <footer><p className="muted small">A captured credential is the question: how long does it stay useful? Standing: days. JIT: minutes. The tools table shows who is holding what right now.</p></footer>
       <div aria-live="polite" className="visually-hidden">{announce}</div>
+      {modal}
       <TalkTrackDialog isOpen={talkOpen} onClose={() => setTalkOpen(false)} talk={talk} />
       <HelpDialog isOpen={helpOpen} onClose={() => setHelpOpen(false)} sections={HELP_SECTIONS} docsUrl="https://github.com/curtismu7/jit-lab-LAB#readme" />
 
